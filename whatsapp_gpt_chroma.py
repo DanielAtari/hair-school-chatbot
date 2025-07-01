@@ -12,7 +12,7 @@ load_dotenv()
 print("Loaded key:", os.getenv('OPENAI_API_KEY'))
 
 # חיבור ל-OpenAI
-client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+client = OpenAI()
 
 # חיבור למסד הנתונים של Chroma
 chroma_client = PersistentClient(path="./chroma_db")
