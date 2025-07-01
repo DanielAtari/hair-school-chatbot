@@ -12,7 +12,7 @@ load_dotenv()
 print("Loaded key:", os.getenv('OPENAI_API_KEY'))
 
 # חיבור ל-OpenAI
-openai.api_key = os.getenv("OPENAI_API_KEY")
+client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 # חיבור למסד הנתונים של Chroma
 chroma_client = PersistentClient(path="/tmp/chroma_db")
@@ -39,7 +39,7 @@ def chatbot(question):
         system_prompt = load_system_prompt()
         full_system_prompt = f"{system_prompt}\n\nהשתמש בטקסט הבא כדי לענות לשאלות בצורה מדויקת ומועילה:\n\n{context}"
 
-        response =client.chat.completions.create(
+        response = client.chat.completions.create(
             model="gpt-4o",
             messages=[
                 {"role": "system", "content": full_system_prompt},
@@ -48,7 +48,7 @@ def chatbot(question):
             max_tokens=200,
             temperature=0.3,
         )
-        return response["choices"][0]["message"]["content"]
+        return response.choices[0].message.content
 
     except Exception as e:
         return f"שגיאה: {str(e)}"
