@@ -46,8 +46,9 @@ def chatbot(question):
                 {"role": "user", "content": question}
             ],
             max_tokens=200,
-            temperature=0.3,
+            temperature=0.3
         )
+
         return response.choices[0].message.content
 
     except Exception as e:
