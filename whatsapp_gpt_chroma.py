@@ -114,6 +114,3 @@ def save_system_prompt_route():
     with open(SYSTEM_PROMPT_FILE, "w", encoding="utf-8") as f:
         f.write(new_prompt)
     return redirect("/edit_system_prompt")
-
-if __name__ == "__main__":
-    app.run(debug=True, port=5001)
