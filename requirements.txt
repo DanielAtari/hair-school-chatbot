@@ -3,3 +3,4 @@ gunicorn==21.2.0
 twilio==8.9.0
 openai==1.33.0
 chromadb==0.4.24
+numpy<2.0
