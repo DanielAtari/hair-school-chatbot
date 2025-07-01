@@ -1,7 +1,7 @@
 from flask import Flask, request, Response, render_template, redirect
 from twilio.twiml.messaging_response import MessagingResponse
 from dotenv import load_dotenv
-import openai
+from openai import OpenAI
 import os
 import json
 import chromadb
@@ -39,7 +39,7 @@ def chatbot(question):
         system_prompt = load_system_prompt()
         full_system_prompt = f"{system_prompt}\n\nהשתמש בטקסט הבא כדי לענות לשאלות בצורה מדויקת ומועילה:\n\n{context}"
 
-        response = openai.ChatCompletion.create(
+        response =client.chat.completions.create(
             model="gpt-4o",
             messages=[
                 {"role": "system", "content": full_system_prompt},
