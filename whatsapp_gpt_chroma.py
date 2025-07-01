@@ -15,7 +15,7 @@ print("Loaded key:", os.getenv('OPENAI_API_KEY'))
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
 # חיבור למסד הנתונים של Chroma
-chroma_client = PersistentClient(path="./chroma_db")
+chroma_client = PersistentClient(path="/tmp/chroma_db")
 collection = chroma_client.get_or_create_collection("hair_school")
 
 SYSTEM_PROMPT_FILE = "system_prompt.txt"
