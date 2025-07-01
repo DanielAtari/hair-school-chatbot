@@ -1,7 +1,7 @@
 from flask import Flask, request, Response, render_template, redirect
 from twilio.twiml.messaging_response import MessagingResponse
 from dotenv import load_dotenv
-from openai import OpenAI
+import openai
 import os
 import json
 import chromadb
@@ -12,7 +12,7 @@ load_dotenv()
 print("Loaded key:", os.getenv('OPENAI_API_KEY'))
 
 # חיבור ל-OpenAI
-client = OpenAI()
+openai.api_key = os.getenv("OPENAI_API_KEY")
 
 # חיבור למסד הנתונים של Chroma
 chroma_client = PersistentClient(path="./chroma_db")
@@ -25,7 +25,6 @@ def load_system_prompt():
     if os.path.exists(SYSTEM_PROMPT_FILE):
         with open(SYSTEM_PROMPT_FILE, "r", encoding="utf-8") as f:
             return f.read()
-    # ברירת מחדל אם אין קובץ
     return "אתה עוזר ללקוח במענה לשאלות על בית ספר לעיצוב שיער. התנהג בצורה אדיבה, חייכנית, מזמינה, לא רצינית מידי ולא רובוטית."
 
 # פונקציית חיפוש לפי שאלה
@@ -40,7 +39,7 @@ def chatbot(question):
         system_prompt = load_system_prompt()
         full_system_prompt = f"{system_prompt}\n\nהשתמש בטקסט הבא כדי לענות לשאלות בצורה מדויקת ומועילה:\n\n{context}"
 
-        completion = client.chat.completions.create(
+        response = openai.ChatCompletion.create(
             model="gpt-4o",
             messages=[
                 {"role": "system", "content": full_system_prompt},
@@ -49,7 +48,7 @@ def chatbot(question):
             max_tokens=200,
             temperature=0.3,
         )
-        return completion.choices[0].message.content
+        return response["choices"][0]["message"]["content"]
 
     except Exception as e:
         return f"שגיאה: {str(e)}"
