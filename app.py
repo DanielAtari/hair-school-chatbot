@@ -1,7 +1,6 @@
 # app.py
 
 from flask import Flask, request, Response, render_template, redirect, jsonify
-from twilio.twiml.messaging_response import MessagingResponse
 from dotenv import load_dotenv
 from openai import OpenAI
 import os
@@ -72,19 +71,9 @@ def chatbot(question):
     except Exception as e:
         return f"שגיאה: {str(e)}"
 
-@app.route("/whatsapp", methods=["POST"])
-def whatsapp_reply():
-    incoming_msg = request.form.get('Body')
-    print("התקבלה הודעה:", incoming_msg)
-
-    resp = MessagingResponse()
-    msg = resp.message()
-
-    if incoming_msg:
-        answer = chatbot(incoming_msg.strip())
-        msg.body(answer)
-
-    return Response(str(resp), mimetype="application/xml")
+@app.route("/")
+def home():
+    return "ברוך הבא לצ׳אטבוט של Atara! האפליקציה פעילה. 🎯"
 
 @app.route("/edit", methods=["GET"])
 def edit_text():
@@ -148,7 +137,3 @@ def update_tokens():
     db.session.commit()
 
     return jsonify({"status": "ok", "total_tokens": log.total_tokens})
-
-if __name__ == "__main__":
-    app.run(debug=True)
-
