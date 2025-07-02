@@ -1,0 +1,22 @@
+<!-- templates/chat.html -->
+<!DOCTYPE html>
+<html lang="he">
+<head>
+  <meta charset="UTF-8">
+  <title>צ׳אט עם Atara Bot</title>
+</head>
+<body>
+  <h1>צ׳אט לעסק: {{ business_id }}</h1>
+
+  <form method="post">
+    <label for="question">שאל שאלה:</label><br>
+    <input type="text" id="question" name="question" style="width: 300px;" required>
+    <button type="submit">שלח</button>
+  </form>
+
+  {% if answer %}
+    <h3>תשובת הבוט:</h3>
+    <p>{{ answer }}</p>
+  {% endif %}
+</body>
+</html>
