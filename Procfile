@@ -1,1 +1,1 @@
-web: gunicorn whatsapp_gpt_chroma:app
+web: gunicorn app:app

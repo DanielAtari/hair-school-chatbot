@@ -1,4 +1,6 @@
-from flask import Flask, request, Response, render_template, redirect
+# app.py
+
+from flask import Flask, request, Response, render_template, redirect, jsonify
 from twilio.twiml.messaging_response import MessagingResponse
 from dotenv import load_dotenv
 from openai import OpenAI
@@ -6,10 +8,26 @@ import os
 import json
 import chromadb
 from chromadb import PersistentClient
+from database.config import Config
+from database.models import db, Business, TokenUsageLog
+from datetime import datetime
+from pathlib import Path
 
-# טעינת מפתחות מה-ENV
-load_dotenv()
+# טעינת משתני סביבה מקובץ .env גם אם מריצים ממקום אחר
+load_dotenv(dotenv_path=Path(__file__).resolve().parent / ".env")
 print("Loaded key:", os.getenv('OPENAI_API_KEY'))
+print("Database URI:", os.getenv('DATABASE_URL'))
+
+# יצירת Flask app
+app = Flask(__name__)
+
+# הגדרות SQLAlchemy
+app.config.from_object(Config)
+db.init_app(app)
+
+# יצירת טבלאות (למי שלא יכול להשתמש ב-@before_first_request)
+with app.app_context():
+    db.create_all()
 
 # חיבור ל-OpenAI
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
@@ -53,9 +71,6 @@ def chatbot(question):
 
     except Exception as e:
         return f"שגיאה: {str(e)}"
-
-# Flask app
-app = Flask(__name__)
 
 @app.route("/whatsapp", methods=["POST"])
 def whatsapp_reply():
@@ -113,3 +128,27 @@ def save_system_prompt_route():
     with open(SYSTEM_PROMPT_FILE, "w", encoding="utf-8") as f:
         f.write(new_prompt)
     return redirect("/edit_system_prompt")
+
+# API לעדכון טוקנים
+@app.route("/update_tokens", methods=["POST"])
+def update_tokens():
+    data = request.get_json()
+    business_id = data.get("business_id")
+    month = data.get("month")
+    tokens_used = data.get("tokens_used")
+
+    log = TokenUsageLog.query.filter_by(business_id=business_id, month=month).first()
+    if not log:
+        log = TokenUsageLog(business_id=business_id, month=month, total_tokens=0)
+
+    log.total_tokens += tokens_used
+    log.updated_at = datetime.utcnow()
+
+    db.session.add(log)
+    db.session.commit()
+
+    return jsonify({"status": "ok", "total_tokens": log.total_tokens})
+
+if __name__ == "__main__":
+    app.run(debug=True)
+

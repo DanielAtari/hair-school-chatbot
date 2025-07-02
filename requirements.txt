@@ -5,3 +5,5 @@ openai>=1.11.0
 chromadb==0.4.24
 numpy==1.26.4
 python-dotenv==1.0.1
+Flask-SQLAlchemy
+psycopg2-binary
