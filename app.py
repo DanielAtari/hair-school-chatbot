@@ -137,3 +137,6 @@ def update_tokens():
     db.session.commit()
 
     return jsonify({"status": "ok", "total_tokens": log.total_tokens})
+
+if __name__ == "__main__":
+    app.run(debug=True)
