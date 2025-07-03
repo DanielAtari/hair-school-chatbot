@@ -1,6 +1,7 @@
-
 from datetime import datetime
 from flask_sqlalchemy import SQLAlchemy
+
+
 db = SQLAlchemy()
 
 
@@ -10,11 +11,13 @@ class Business(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
     email = db.Column(db.String(120), nullable=True)
+    system_prompt = db.Column(db.Text, nullable=True)
     token_limit_per_month = db.Column(db.Integer, default=100000)
     is_active = db.Column(db.Boolean, default=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
     usage_logs = db.relationship('TokenUsageLog', back_populates='business')
+    messages = db.relationship('Message', back_populates='business', cascade="all, delete-orphan")
 
 
 class TokenUsageLog(db.Model):
@@ -27,3 +30,15 @@ class TokenUsageLog(db.Model):
     updated_at = db.Column(db.DateTime, default=datetime.utcnow)
 
     business = db.relationship('Business', back_populates='usage_logs')
+
+
+class Message(db.Model):
+    __tablename__ = 'messages'
+
+    id = db.Column(db.Integer, primary_key=True)
+    business_id = db.Column(db.Integer, db.ForeignKey('businesses.id'), nullable=False)
+    role = db.Column(db.String(10), nullable=False)  # "user" or "assistant"
+    content = db.Column(db.Text, nullable=False)
+    timestamp = db.Column(db.DateTime, default=datetime.utcnow)
+
+    business = db.relationship('Business', back_populates='messages')

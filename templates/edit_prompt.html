@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="he">
+<head>
+    <meta charset="UTF-8">
+    <title>עריכת פרומפט</title>
+</head>
+<body>
+    <h1>עריכת פרומפט לעסק {{ business.name }}</h1>
+    <form method="POST">
+        <label>פרומפט מערכת:</label><br>
+        <textarea name="system_prompt" rows="10" cols="80">{{ business.system_prompt }}</textarea><br><br>
+        <button type="submit">שמור</button>
+    </form>
+    <br>
+    <a href="/chat/{{ business.id }}">⬅ חזרה לצ'אט</a>
+</body>
+</html>
