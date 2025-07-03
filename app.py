@@ -32,9 +32,9 @@ app.register_blueprint(upload_bp)
 app.register_blueprint(admin_bp)
 
 # דף בית לבדיקה שהאפליקציה פועלת
-@app.route("/")
+@app.route("/", methods=["GET"])
 def home():
-    return "ברוך הבא לצ׳אטבוט של Atara! האפליקציה פעילה. 🎯"
+    return "האפליקציה פועלת! ברוך הבא ל־Atara: בוט לשירות לקוחות חכם"
 
 if __name__ == "__main__":
     app.run(debug=True)
